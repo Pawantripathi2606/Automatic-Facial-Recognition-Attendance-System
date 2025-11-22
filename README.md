@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Automatic Facial Recognition Attendance System
 
 Python + Streamlit app for automatic attendance using face recognition.
@@ -20,3 +21,6 @@ Python + Streamlit app for automatic attendance using face recognition.
 mkdir face_attendance_system
 cd face_attendance_system
 # copy all .py files + requirements.txt here
+=======
+# Automatic-Facial-Recognition-Attendance-System
+>>>>>>> 04188c839ddb9278cf8981fd8dc8e95303604ba4
