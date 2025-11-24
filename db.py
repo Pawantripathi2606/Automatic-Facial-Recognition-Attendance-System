@@ -1,5 +1,3 @@
-# db.py
-
 import sqlite3
 import json
 from config import DB_PATH
@@ -153,7 +151,6 @@ def get_student_by_student_id(roll_no: str):
 def get_student_by_username(username: str):
     """
     Auto-link students by login username = roll number.
-    This is Option A.
     """
     conn = get_connection()
     cur = conn.cursor()
@@ -179,6 +176,33 @@ def update_student_face_encoding(student_id: int, encoding_json: str):
         "UPDATE students SET face_encoding = ? WHERE id = ?",
         (encoding_json, student_id),
     )
+    conn.commit()
+    conn.close()
+
+
+# NEW: update student basic details (admin/teacher edit)
+def update_student(student_pk: int, student_id: str, name: str, cls: str, sec: str, email: str):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        """
+        UPDATE students
+        SET student_id = ?, name = ?, class = ?, section = ?, email = ?
+        WHERE id = ?
+        """,
+        (student_id, name, cls, sec, email, student_pk),
+    )
+    conn.commit()
+    conn.close()
+
+
+# NEW: delete student (and optionally related attendance)
+def delete_student(student_pk: int, delete_attendance: bool = False):
+    conn = get_connection()
+    cur = conn.cursor()
+    if delete_attendance:
+        cur.execute("DELETE FROM attendance WHERE student_id = ?", (student_pk,))
+    cur.execute("DELETE FROM students WHERE id = ?", (student_pk,))
     conn.commit()
     conn.close()
 
@@ -233,3 +257,44 @@ def get_all_attendance_records():
     rows = cur.fetchall()
     conn.close()
     return [dict(r) for r in rows]
+
+
+# NEW: update attendance status (admin manual edit)
+def update_attendance_status(att_id: int, status: str):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        "UPDATE attendance SET status = ? WHERE id = ?",
+        (status, att_id),
+    )
+    conn.commit()
+    conn.close()
+
+
+# NEW: delete a single attendance record
+def delete_attendance_record(att_id: int):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM attendance WHERE id = ?", (att_id,))
+    conn.commit()
+    conn.close()
+
+
+# ------------------------- BULK DELETE (SAFE MODE) ------------------------- #
+
+def delete_all_attendance():
+    """Delete ALL attendance rows, but keep table structure."""
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM attendance")
+    conn.commit()
+    conn.close()
+
+
+def clear_all_face_encodings():
+    """Remove all face encodings but keep student records."""
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("UPDATE students SET face_encoding = NULL")
+    conn.commit()
+    conn.close()

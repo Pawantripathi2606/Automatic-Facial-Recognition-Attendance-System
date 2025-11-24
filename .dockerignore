@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+attendance_system.db
+.env
+.git
+.gitignore
+.vscode
+.idea
+.DS_Store
+insightface_models/
