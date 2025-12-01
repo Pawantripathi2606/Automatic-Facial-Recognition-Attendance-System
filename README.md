@@ -1,4 +1,4 @@
-# Automatic Facial Recognition Attendance System
+# Automatic Facial Recognition Attendance System.
 
 A complete, end-to-end attendance automation system built using:
 
